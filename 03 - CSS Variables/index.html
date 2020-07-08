@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scoped CSS Variables and JS</title>
+</head>
+<body>
+  <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
+
+  <div class="controls">
+    <label for="spacing">Spacing:</label>
+    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+
+    <label for="blur">Blur:</label>
+    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+
+    <label for="base">Base Color</label>
+    <input id="base" type="color" name="base" value="#bada55">
+  </div>
+
+  <img src="https://images.unsplash.com/photo-1564865878688-9a244444042a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80">
+
+  <style>
+    /* CSS переменные записываются в всевдокласс root, который соответствует корневому элементу в дереве документов (обычно это тег <html>). Это делает вашу переменную доступной во всём приложении, так как все ваши DOM-элементы являются потомками тега <html>. */
+    :root {
+      --base: #bada55;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    img {
+      padding: var(--spacing);
+      background-color: var(--base);
+      filter: blur(var(--blur));
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 2px 25px var(--base);
+    }
+
+    .hl {
+      color: var(--base);
+    }
+
+    body {
+      text-align: center;
+      background: #1d1d1d;
+      color: white;
+      font-family: 'helvetica neue', sans-serif;
+      font-weight: 100;
+      font-size: 50px;
+    }
+
+    .controls {
+      margin-bottom: 50px;
+    }
+
+    input {
+      width: 100px;
+    }
+  </style>
+
+  <script>
+    const inputs = document.querySelectorAll('.controls input'); // Ищем все input с классом controls. На выходе получим NodeList (не Array).
+
+    function handleUpdate() {
+      const suffix = this.dataset.sizing || ''; // получаем значение 'px' из data-sizing атрибута у blur и spacing || ничего у base color
+      document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix); // обновляем значения name и value
+    }
+
+    inputs.forEach(input => input.addEventListener('change', handleUpdate)); // срабатывает на значение, определенное после того, как мы отпускаем зажатый спин
+    inputs.forEach(input => input.addEventListener('mousemove', handleUpdate)); // срабатывает на все значения при движении спина мышкой
+  </script>
+
+</body>
+</html>
